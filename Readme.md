@@ -1,4 +1,4 @@
-#### Output Example:
+#### Date Availabilty API:
 ```json
 {
   "dates": [
