@@ -6,7 +6,7 @@ import { fetchAndStoreInventory } from './fetchStore';
 async function fetchNext30Days(
   products: number[],
   callsPerMinute: number = 30,
-  concurrency: number = 5
+  concurrency: number = 1
 ): Promise<void> {
   // Generating dates for the next 7 days
   const dates: string[] = [];
@@ -40,7 +40,7 @@ async function fetchNext30Days(
     return limit(async () => {
       try {
         // Processing the request
-        await fetchAndStoreInventory(productId, date);
+        fetchAndStoreInventory(productId, date);
         console.log(`Completed: Product ${productId} for ${date}`);
         
         // Ratelimiting

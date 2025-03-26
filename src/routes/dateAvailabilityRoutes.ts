@@ -61,7 +61,7 @@ router.get('/product/:productId', async (req: any, res: any) => {
   }
 });
 
-// Type definitions with optional and nullable fields
+// Type definitions to ensure the desired response format
 type Price = {
   finalPrice: number;
   currencyCode: string;
@@ -129,7 +129,7 @@ router.get('/product/:productId/date/:date', async (req: any, res:any) => {
 
       return {
         startTime: slot.startTime,
-        startDate: dateString, // Use the requested date
+        startDate: dateString, 
         price: {
           finalPrice: firstPaxAvail?.priceFinal || 0,
           currencyCode: firstPaxAvail?.priceCurrency || 'GBP',
