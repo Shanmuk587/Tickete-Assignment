@@ -1,0 +1,74 @@
+// schema.prisma
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "postgresql" // or "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id              Int               @id
+  name            String?           // Optional:  If you have product names
+  description     String?           // Optional: If you have descriptions
+  DateAvailability DateAvailability[]
+}
+
+model DateAvailability {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  date      DateTime @db.Date // Store only the date part
+
+  slots Slot[]
+
+  @@unique([productId, date]) // Ensures unique date per product
+}
+
+model Slot {
+  id               Int      @id @default(autoincrement())
+  dateAvailabilityId Int
+  dateAvailability DateAvailability @relation(fields: [dateAvailabilityId], references: [id])
+  startTime          String // "HH:mm" format
+
+  endTime           String? // Keep endTime - they are all equal for this API but let's keep it
+  providerSlotId  String? // keep providerSlotId
+  variantId Int? // keep variantId
+
+  remaining Int  // Available slots
+
+  currencyCode String? // Keep currencyCode for slot
+
+  slotPaxAvailabilities SlotPaxAvailability[]
+  @@unique([dateAvailabilityId, startTime])
+}
+
+model PaxType {
+  id          Int     @id @default(autoincrement())
+  type        String  @unique // "ADULT_12~99", "CHILD_3~11" - the API's type field
+  name        String? // "Adult", "Child" - the API's name field
+  description String? // "12-99 years", "3-11 years"
+  slotPaxAvailabilities SlotPaxAvailability[]
+}
+
+model SlotPaxAvailability {
+  slotId    Int
+  slot      Slot    @relation(fields: [slotId], references: [id])
+  paxTypeId Int
+  paxType   PaxType @relation(fields: [paxTypeId], references: [id])
+  min       Int?    // Minimum # of this pax type allowed
+  max       Int?    // Maximum # of this pax type allowed
+
+  remaining Int  // Remaining slots for this pax type specifically
+
+  isPrimary Boolean? // added isPrimary
+
+  priceFinal    Float
+  priceCurrency String
+  priceOriginal Float
+  priceDiscount Float?
+
+  @@id([slotId, paxTypeId]) // Composite Key
+}
