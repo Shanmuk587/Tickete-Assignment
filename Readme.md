@@ -1,40 +1,3 @@
-# Project Optimizations
-
-This document outlines various optimizations implemented to improve the performance, scalability, and reliability of the project.
-
-## Batching Database Writes
-- Current Approach: Each API call triggers a separate database write for a single entry.
-- Optimized Approach: Process data in batches to reduce the number of database writes.
-  - Preprocess the data and store it in an array.
-  - Use Prisma's `createMany` with nested writes method to perform a single write operation for multiple entries, improving efficiency.# Project Optimizations
-
-This document outlines various optimizations implemented to improve the performance, scalability, and reliability of the project.
-
-## Batching Database Writes
-- Current Approach: Each API call triggers a separate database write for a single entry.
-- Optimized Approach: Process data in batches to reduce the number of database writes.
-  - Preprocess the data and store it in an array.
-  - Use Prisma's `createMany` with nested writes method to perform a single write operation for multiple entries, improving efficiency.
-
-## Message Queues and Worker Pool
-- Implement message queues to delegate asynchronous tasks for better scalability.
-- Use worker pool to handle these tasks and distribute the load to a worker.
-- Enable distributed caching to reduce load on the database and improve response times.
-
-## Retry Mechanisms
-- Handle interruptions in processes by implementing retry mechanisms.
-
-## Database Sharding and Horizontal Scaling
-- Implement database sharding to split data across multiple databases or nodes based on specific criteria, improving read/write performance.
-- Enable horizontal scaling to handle increased traffic by adding more servers or nodes.
-
-By incorporating these optimizations, the project can achieve better performance, scalability, and reliability while minimizing resource usage.
-
-## APIs
-
-### Date Availability API
-This API provides information about the availability and pricing of different dates.
-
 #### Output Example:
 ```json
 {
@@ -62,12 +25,6 @@ This API provides information about the availability and pricing of different da
   ]
 }
 ```
-
-#### Key Details:
-- `date`: The specific date.
-- `price`: Contains `currencyCode`, `discount`, `finalPrice`, and `originalPrice` for the date.
-- `variantIds`: List of variant IDs available for the date.
-
 ### Slots API
 This API provides detailed information about available slots, including pricing and availability.
 
@@ -130,21 +87,19 @@ This API provides detailed information about available slots, including pricing 
 }
 ```
 
-#### Key Details:
-- `startTime`: The start time of the slot.
-- `startDate`: The date of the slot.
-- `price`: Contains `finalPrice`, `currencyCode`, and `originalPrice` for the slot.
-- `remaining`: Total remaining slots.
-- `paxAvailability`: Details of availability for different passenger types (e.g., Adult, Child, Infant) with pricing and remaining count.
+# Project Optimizations
 
-By incorporating these APIs, the project provides dynamic and accurate information on availability and pricing, enhancing the user experience and decision-making process.
+This document outlines various optimizations implemented to improve the performance, scalability, and reliability of the project.
 
-
+## Batching Database Writes
+- Current Approach: Each API call triggers a separate database write for a single entry.
+- Optimized Approach: Process data in batches to reduce the number of database writes.
+  - Preprocess the data and store it in an array.
+  - Use Prisma's `createMany` with nested writes method to perform a single write operation for multiple entries, improving efficiency.
 
 ## Message Queues and Worker Pool
 - Implement message queues to delegate asynchronous tasks for better scalability.
 - Use worker pool to handle these tasks and distribute the load to a worker.
-- Enable distributed caching to reduce load on the database and improve response times.
 
 ## Retry Mechanisms
 - Handle interruptions in processes by implementing retry mechanisms.
@@ -153,4 +108,8 @@ By incorporating these APIs, the project provides dynamic and accurate informati
 - Implement database sharding to split data across multiple databases or nodes based on specific criteria, improving read/write performance.
 - Enable horizontal scaling to handle increased traffic by adding more servers or nodes.
 
-By incorporating these optimizations, the project can achieve better performance, scalability, and reliability while minimizing resource usage.
+## APIs
+
+### Date Availability API
+This API provides information about the availability and pricing of different dates.
+
