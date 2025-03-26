@@ -60,24 +60,4 @@ async function fetchNext7Days(
   await Promise.all(promises);
 }
 
-/**
- * Example usage
- */
-// async function main() {
-//   // Example list of product IDs
-//   const products = [14, 15];
-  
-//   console.time('Processing time');
-//   await fetchNext7Days(
-//     products,
-//     30,  // 30 requests per second rate limit
-//     10   // 10 concurrent requests
-//   );
-//   console.timeEnd('Processing time');
-  
-//   // With concurrency and proper rate limiting, this should be much more efficient
-// }
-
-// main().catch(console.error);
-
 export {fetchNext7Days};
