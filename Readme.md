@@ -59,7 +59,6 @@ This API provides information about the availability and pricing of different da
       },
       "variantIds": []
     }
-    // Additional dates omitted for brevity
   ]
 }
 ```
