@@ -31,14 +31,15 @@ async function fetchNext30Days(
   
   console.log(`Processing ${tasks.length} tasks with ${concurrency} concurrent workers at ${callsPerMinute} calls per minute`);
   
-  // Create a concurrency limiter
+  // Concurrency Limits:
+  // If the background promises grow too many at once, you could overwhelm the DB or the system. To prevent this, you can track and limit the number of active promises
   const limit = pLimit(concurrency);
   
-  // Process tasks with concurrency control and simple rate limiting
+  // Processing tasks with concurrency control and simple rate limiting, to avoid server overvelming
   const promises = tasks.map(({ productId, date }) => {
     return limit(async () => {
       try {
-        // Process the request
+        // Processing the request
         await fetchAndStoreInventory(productId, date);
         console.log(`Completed: Product ${productId} for ${date}`);
         
@@ -49,7 +50,7 @@ async function fetchNext30Days(
       }
     });
   });
-  
+  // We can try increasing the thread pool limit (can be concluded through metrics), as there will be lot more asynchronous functions
   await Promise.all(promises);
 }
 

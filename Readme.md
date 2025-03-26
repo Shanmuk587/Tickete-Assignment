@@ -91,7 +91,10 @@ This API provides detailed information about available slots, including pricing 
 
 This document outlines various optimizations implemented to improve the performance, scalability, and reliability of the project.
 
+## Increasing Threadpool limit, Looking at the metrics to set the optimal limit
+
 ## Batching Database Writes
+- Batching it out, if the process interupts, can be continued from that batch onwards than starting it from first
 - Current Approach: Each API call triggers a separate database write for a single entry.
 - Optimized Approach: Process data in batches to reduce the number of database writes.
   - Preprocess the data and store it in an array.
