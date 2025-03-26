@@ -2,14 +2,7 @@ import pLimit from 'p-limit';
 import { setTimeout } from 'timers/promises';
 import { fetchAndStoreInventory } from './fetchStore';
 
-/**
- * Fetches and stores data for multiple products across the next 7 days
- * with rate limiting to 30 calls per minute
- * 
- * @param products - Array of product IDs
- * @param callsPerMinute - Number of API calls per minute (default: 30)
- * @param concurrency - Maximum number of concurrent requests (default: 5)
- */
+
 async function fetchNext7Days(
   products: number[],
   callsPerMinute: number = 30,
@@ -28,7 +21,7 @@ async function fetchNext7Days(
   console.log("fetching for next 7days")
   console.log(`Generated dates: ${dates.join(', ')}`);
   
-  // Simple delay between calls in milliseconds
+  // delay 
   const delayMs = (60 * 1000) / callsPerMinute;
   
   // Create tasks
@@ -48,11 +41,10 @@ async function fetchNext7Days(
         await fetchAndStoreInventory(productId, date);
         console.log(`Completed: Product ${productId} for ${date}`);
         
-        // Apply simple rate limiting - just wait the fixed amount
+        // rate limiting
         await setTimeout(delayMs);
       } catch (error) {
         console.error(`Error processing ${productId} for ${date}:`, error);
-        // Simple error handling - you could add retry logic here
       }
     });
   });

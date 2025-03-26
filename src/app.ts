@@ -2,7 +2,6 @@ import express from 'express';
 import { EventEmitter } from 'events';
 import cron from 'node-cron';
 import dateAvailabilityRoutes from './routes/dateAvailabilityRoutes'
-// Import existing functions
 import { batchFetchInventory } from './fetchtoday';
 import { fetchNext30Days } from './fetch30';
 import { fetchNext7Days } from './fetch7';
@@ -52,10 +51,10 @@ class TaskQueue {
   }
 }
 
-// Create a global task queue
+// Created a global task queue
 const globalTaskQueue = new TaskQueue();
 
-// Logging utility
+// Logging utility for debugging
 function log(message: string) {
   console.log(`[${new Date().toISOString()}] ${message}`);
 }
@@ -96,14 +95,6 @@ class ScheduledFunctions {
 // Express application setup
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'healthy', 
-    timestamp: new Date().toISOString() 
-  });
-});
 
 app.use('/date-availabilities', dateAvailabilityRoutes)
 

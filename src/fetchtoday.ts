@@ -9,9 +9,7 @@ dotenv.config();
 // List of product IDs to fetch inventory for
 const productIds = [14,15];
 
-/**
- * Fetches inventory for multiple products with rate limiting
- */
+
 async function batchFetchInventory() {
   try {
     // Get today's date in YYYY-MM-DD format
@@ -28,7 +26,7 @@ async function batchFetchInventory() {
     const promises = productIds.map((productId, index) => {
       return limit(async () => {
         try {
-          // Add delay between API calls for rate limiting
+          // Adding delay between API calls for rate limiting
           if (index > 0) {
             await new Promise(resolve => setTimeout(resolve, requestDelay));
           }
@@ -37,8 +35,8 @@ async function batchFetchInventory() {
           await fetchAndStoreInventory(productId, today);
           console.log(`✅ Successfully fetched inventory for product ${productId}`);
           return { productId, success: true };
+          
         } catch (error) {
-          // Type checking for error - handling both Error objects and other error types
           const errorMessage = error instanceof Error ? error.message : String(error);
           console.error(`❌ Failed to fetch inventory for product ${productId}:`, errorMessage);
           return { productId, success: false, error: errorMessage };
@@ -46,10 +44,10 @@ async function batchFetchInventory() {
       });
     });
     
-    // Wait for all requests to complete
+    // Waiting for all requests to complete, 5 at a time
     const results = await Promise.all(promises);
     
-    // Summarize results
+    // Summarizing the results
     const successful = results.filter(r => r.success).length;
     const failed = results.filter(r => !r.success).length;
     
