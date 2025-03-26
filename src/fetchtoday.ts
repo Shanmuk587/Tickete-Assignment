@@ -33,12 +33,12 @@ async function batchFetchInventory() {
           
           console.log(`Fetching inventory for product ${productId}...`);
           await fetchAndStoreInventory(productId, today);
-          console.log(`✅ Successfully fetched inventory for product ${productId}`);
+          console.log(`Successfully fetched inventory for product ${productId}`);
           return { productId, success: true };
           
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
-          console.error(`❌ Failed to fetch inventory for product ${productId}:`, errorMessage);
+          console.error(`Failed to fetch inventory for product ${productId}:`, errorMessage);
           return { productId, success: false, error: errorMessage };
         }
       });
