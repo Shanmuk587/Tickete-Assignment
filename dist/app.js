@@ -101,6 +101,9 @@ app.get('/health', (req, res) => {
     });
 });
 app.use('/date-availabilities', dateAvailabilityRoutes_1.default);
+app.get('/', (req, res) => {
+    res.send('Hello, TypeScript with Express!');
+});
 // Scheduler setup
 function setupScheduler() {
     // Every 15 minutes

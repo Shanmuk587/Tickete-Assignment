@@ -128,20 +128,3 @@ async function fetchAndStoreInventory(productId, date) {
         throw error;
     }
 }
-// // Example usage
-// async function main() {
-//   try {
-//     // Example: Fetch inventory for product ID 225532707686 on March 23, 2025
-//     await fetchAndStoreInventory(15, '2025-03-23')
-//     console.log('Data fetched and stored successfully')
-//   } catch (error) {
-//     console.error('Error in main function:', error)
-//   } finally {
-//     await prisma.$disconnect()
-//   }
-// }
-// // Run the script if it's called directly
-// if (require.main === module) {
-//   main()
-// }
-// export { fetchAndStoreInventory };

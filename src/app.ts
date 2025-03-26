@@ -7,6 +7,8 @@ import { batchFetchInventory } from './fetchtoday';
 import { fetchNext30Days } from './fetch30';
 import { fetchNext7Days } from './fetch7';
 
+let isPaused: boolean = false;
+
 // Increase max listeners to prevent warnings
 EventEmitter.defaultMaxListeners = 20;
 
@@ -105,21 +107,47 @@ app.get('/health', (req, res) => {
 
 app.use('/date-availabilities', dateAvailabilityRoutes)
 
+// Routes
+app.post("/pause", (req: any, res: any) => {
+  if (isPaused) {
+    return res.status(400).json({ message: "Task is already paused." });
+  }
+  isPaused = true;
+  console.log("Task has been paused.");
+  return res.status(200).json({ message: "Task has been paused successfully." });
+});
+
+app.post("/resume", (req: any, res: any) => {
+  if (!isPaused) {
+    return res.status(400).json({ message: "Task is being done" });
+  }
+  isPaused = false;
+  console.log("Task has resumed.");
+  return res.status(200).json({ message: "Task interval started" });
+});
+
+app.get('/', (req: any, res: any) => {
+  res.send('Hello, TypeScript with Express!');
+});
+
 // Scheduler setup
 function setupScheduler() {
   // Every 15 minutes
   cron.schedule('*/1 * * * *', () => {
+    if(isPaused){ return; }
     ScheduledFunctions.scheduleFun1().catch(console.error);
   });
 
   // Every 4 hours
 //   0 */4 * * *
   cron.schedule('0 */4 * * *', () => {
+    if(isPaused){ return; }
     ScheduledFunctions.scheduleFun2().catch(console.error);
   });
 
   // Daily at midnight
   cron.schedule('0 0 * * *', () => {
+    if(isPaused){ return; }
     ScheduledFunctions.scheduleFun3().catch(console.error);
   });
 }

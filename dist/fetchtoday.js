@@ -66,12 +66,3 @@ async function batchFetchInventory() {
         console.error('Batch fetch operation failed:', errorMessage);
     }
 }
-// Run the batch fetch if this script is executed directly
-if (require.main === module) {
-    batchFetchInventory()
-        .then(() => console.log('Batch operation completed'))
-        .catch(error => {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        console.error('Error in batch operation:', errorMessage);
-    });
-}
