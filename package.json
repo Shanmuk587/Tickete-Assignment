@@ -5,8 +5,7 @@
   "scripts": {
     "start": "node dist/app.js",
     "dev": "nodemon src/app.ts",
-    "build": "prisma generate && tsc",
-    "postinstall": "prisma generate"
+    "build": "prisma generate && tsc"
   },
   "keywords": [],
   "author": "",

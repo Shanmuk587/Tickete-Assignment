@@ -9,7 +9,7 @@ import { fetchNext7Days } from './fetch7';
 let isPaused: boolean = false;
 
 // Increase max listeners to prevent warnings
-EventEmitter.defaultMaxListeners = 20;
+// EventEmitter.defaultMaxListeners = 20;
 
 // Custom Queue Class for managing task processing
 class TaskQueue {
