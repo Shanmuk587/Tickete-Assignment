@@ -1,5 +1,4 @@
 import express from 'express';
-import { EventEmitter } from 'events';
 import cron from 'node-cron';
 import dateAvailabilityRoutes from './routes/dateAvailabilityRoutes'
 import { batchFetchInventory } from './fetchtoday';
