@@ -1,26 +1,26 @@
-# Use an official Node runtime as a parent image
 FROM node:20-alpine
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
+# Copy package files first
 COPY package*.json ./
 
-# Install global dependencies
+# Install global and project dependencies
 RUN npm install -g typescript ts-node prisma
-
-# Install project dependencies
 RUN npm install
 
-# Copy the rest of the application code
+# Copy the entire project
 COPY . .
 
 # Generate Prisma client
 RUN npx prisma generate
 
-# Build TypeScript to JavaScript
+# Explicitly build TypeScript
 RUN npm run build
+
+# Verify dist directory contents
+RUN ls -la dist
 
 # Expose the port the app runs on
 EXPOSE 3000
@@ -31,8 +31,12 @@ ENV NODE_ENV="production"
 ENV TICKETE_API_KEY="6ff5c38f79a4b5c5f3e08cba86c1ff05"
 ENV PORT=3000
 
-# Command to run the application
-CMD ["npm", "start"]
+# Update start script to use ts-node directly as a fallback
+CMD ["sh", "-c", "if [ -f dist/app.js ]; then node dist/app.js; else npx ts-node src/app.ts; fi"]
+
+
+# # Command to run the application
+# CMD ["npm", "start"]
 
 
 
