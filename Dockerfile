@@ -20,7 +20,7 @@ RUN npx prisma generate
 RUN npm run build
 
 # Verify dist directory contents
-RUN ls -la dist
+# RUN ls -la dist
 
 # Expose the port the app runs on
 EXPOSE 3000
