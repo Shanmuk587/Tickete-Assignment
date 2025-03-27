@@ -1,11 +1,19 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScheduledFunctions = exports.app = void 0;
 const express_1 = __importDefault(require("express"));
-const events_1 = require("events");
 const node_cron_1 = __importDefault(require("node-cron"));
 const dateAvailabilityRoutes_1 = __importDefault(require("./routes/dateAvailabilityRoutes"));
 const fetchtoday_1 = require("./fetchtoday");
@@ -13,44 +21,48 @@ const fetch30_1 = require("./fetch30");
 const fetch7_1 = require("./fetch7");
 let isPaused = false;
 // Increase max listeners to prevent warnings
-events_1.EventEmitter.defaultMaxListeners = 20;
+// EventEmitter.defaultMaxListeners = 20;
 // Custom Queue Class for managing task processing
 class TaskQueue {
     constructor() {
         this.queue = [];
         this.isProcessing = false;
     }
-    async enqueue(task) {
-        return new Promise((resolve, reject) => {
-            this.queue.push(async () => {
-                try {
-                    await task();
-                    resolve();
-                }
-                catch (error) {
-                    reject(error);
-                }
+    enqueue(task) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                this.queue.push(() => __awaiter(this, void 0, void 0, function* () {
+                    try {
+                        yield task();
+                        resolve();
+                    }
+                    catch (error) {
+                        reject(error);
+                    }
+                }));
+                this.processQueue();
             });
-            this.processQueue();
         });
     }
-    async processQueue() {
-        // Prevent concurrent processing
-        if (this.isProcessing)
-            return;
-        this.isProcessing = true;
-        while (this.queue.length > 0) {
-            const task = this.queue.shift();
-            if (task) {
-                try {
-                    await task();
-                }
-                catch (error) {
-                    console.error('Task processing error:', error);
+    processQueue() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Prevent concurrent processing
+            if (this.isProcessing)
+                return;
+            this.isProcessing = true;
+            while (this.queue.length > 0) {
+                const task = this.queue.shift();
+                if (task) {
+                    try {
+                        yield task();
+                    }
+                    catch (error) {
+                        console.error('Task processing error:', error);
+                    }
                 }
             }
-        }
-        this.isProcessing = false;
+            this.isProcessing = false;
+        });
     }
 }
 // Created a global task queue
@@ -67,24 +79,30 @@ const PRODUCT_IDS = {
 // Wrapper functions for existing tasks
 class ScheduledFunctions {
     // Function 1 - Runs every 15 minutes
-    static async scheduleFun1() {
-        await globalTaskQueue.enqueue(async () => {
-            log('Executing batchFetchInventory - Batch Fetch Inventory');
-            await (0, fetchtoday_1.batchFetchInventory)();
+    static scheduleFun1() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield globalTaskQueue.enqueue(() => __awaiter(this, void 0, void 0, function* () {
+                log('Executing batchFetchInventory - Batch Fetch Inventory');
+                yield (0, fetchtoday_1.batchFetchInventory)();
+            }));
         });
     }
     // Function 2 - Runs every 4 hours
-    static async scheduleFun2() {
-        await globalTaskQueue.enqueue(async () => {
-            log('Executing fetchNext7Days - Fetch Next 7 Days');
-            await (0, fetch7_1.fetchNext7Days)(PRODUCT_IDS.NEXT_7_DAYS);
+    static scheduleFun2() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield globalTaskQueue.enqueue(() => __awaiter(this, void 0, void 0, function* () {
+                log('Executing fetchNext7Days - Fetch Next 7 Days');
+                yield (0, fetch7_1.fetchNext7Days)(PRODUCT_IDS.NEXT_7_DAYS);
+            }));
         });
     }
     // Function 3 - Runs daily
-    static async scheduleFun3() {
-        await globalTaskQueue.enqueue(async () => {
-            log('Executing fetchNext30Days - Fetch Next 30 Days');
-            await (0, fetch30_1.fetchNext30Days)(PRODUCT_IDS.NEXT_30_DAYS);
+    static scheduleFun3() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield globalTaskQueue.enqueue(() => __awaiter(this, void 0, void 0, function* () {
+                log('Executing fetchNext30Days - Fetch Next 30 Days');
+                yield (0, fetch30_1.fetchNext30Days)(PRODUCT_IDS.NEXT_30_DAYS);
+            }));
         });
     }
 }

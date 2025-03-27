@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -7,13 +16,13 @@ const express_1 = __importDefault(require("express"));
 const prismaClient_1 = __importDefault(require("../prismaClient"));
 const router = express_1.default.Router();
 // Route to get the Get Date Availabilities for a ProductID
-router.get('/product/:productId', async (req, res) => {
+router.get('/product/:productId', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const productId = parseInt(req.params.productId);
         if (isNaN(productId)) {
             return res.status(400).json({ error: 'Invalid product ID' });
         }
-        const dateAvailabilities = await prismaClient_1.default.dateAvailability.findMany({
+        const dateAvailabilities = yield prismaClient_1.default.dateAvailability.findMany({
             where: {
                 productId: productId,
             },
@@ -34,14 +43,14 @@ router.get('/product/:productId', async (req, res) => {
                 ...new Set(dateAvailability.slots.flatMap((slot) => slot.variantId ? [slot.variantId] : [])),
             ];
             const firstSlot = dateAvailability.slots[0];
-            const firstPaxAvailability = firstSlot?.slotPaxAvailabilities[0]; // Type assertion
+            const firstPaxAvailability = firstSlot === null || firstSlot === void 0 ? void 0 : firstSlot.slotPaxAvailabilities[0];
             return {
                 date: dateAvailability.date.toISOString().split('T')[0],
                 price: {
-                    currencyCode: firstPaxAvailability?.priceCurrency || null,
-                    discount: firstPaxAvailability?.priceDiscount || 0,
-                    finalPrice: firstPaxAvailability?.priceFinal || null,
-                    originalPrice: firstPaxAvailability?.priceOriginal || null,
+                    currencyCode: (firstPaxAvailability === null || firstPaxAvailability === void 0 ? void 0 : firstPaxAvailability.priceCurrency) || null,
+                    discount: (firstPaxAvailability === null || firstPaxAvailability === void 0 ? void 0 : firstPaxAvailability.priceDiscount) || 0,
+                    finalPrice: (firstPaxAvailability === null || firstPaxAvailability === void 0 ? void 0 : firstPaxAvailability.priceFinal) || null,
+                    originalPrice: (firstPaxAvailability === null || firstPaxAvailability === void 0 ? void 0 : firstPaxAvailability.priceOriginal) || null,
                 },
                 variantIds,
             };
@@ -54,65 +63,65 @@ router.get('/product/:productId', async (req, res) => {
         console.error('Error fetching date availabilities:', error);
         res.status(500).json({ error: error.message });
     }
-});
-router.get('/product/:productId/date/:date', async (req, res) => {
+}));
+router.get('/product/:productId/date/:date', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Parse the date and product ID
         const productId = parseInt(req.params.productId);
         const dateString = req.params.date;
         // First, find the specific DateAvailability record
-        const dateAvailability = await prismaClient_1.default.dateAvailability.findFirst({
+        const dateAvailability = yield prismaClient_1.default.dateAvailability.findFirst({
             where: {
                 productId: productId,
-                date: new Date(dateString)
-            }
+                date: new Date(dateString),
+            },
         });
         // If no date availability found, return empty result
         if (!dateAvailability) {
             return res.json({ slots: [] });
         }
         // Fetch slots with detailed pax availabilities
-        const slots = await prismaClient_1.default.slot.findMany({
+        const slots = yield prismaClient_1.default.slot.findMany({
             where: {
-                dateAvailabilityId: dateAvailability.id
+                dateAvailabilityId: dateAvailability.id,
             },
             include: {
                 slotPaxAvailabilities: {
                     include: {
-                        paxType: true
-                    }
-                }
+                        paxType: true,
+                    },
+                },
             },
             orderBy: {
-                startTime: 'asc' // Ordering slots by start time
-            }
+                startTime: 'asc', // Ordering slots by start time
+            },
         });
         // Transform slots to desired output format
-        const transformedSlots = slots.map(slot => {
+        const transformedSlots = slots.map((slot) => {
             // Find the first pax availability's price details
             const firstPaxAvail = slot.slotPaxAvailabilities[0];
             return {
                 startTime: slot.startTime,
                 startDate: dateString,
                 price: {
-                    finalPrice: firstPaxAvail?.priceFinal || 0,
-                    currencyCode: firstPaxAvail?.priceCurrency || 'GBP',
-                    originalPrice: firstPaxAvail?.priceOriginal || 0
+                    finalPrice: (firstPaxAvail === null || firstPaxAvail === void 0 ? void 0 : firstPaxAvail.priceFinal) || 0,
+                    currencyCode: (firstPaxAvail === null || firstPaxAvail === void 0 ? void 0 : firstPaxAvail.priceCurrency) || 'GBP',
+                    originalPrice: (firstPaxAvail === null || firstPaxAvail === void 0 ? void 0 : firstPaxAvail.priceOriginal) || 0,
                 },
                 remaining: slot.remaining,
-                paxAvailability: slot.slotPaxAvailabilities.map(paxAvail => ({
+                paxAvailability: slot.slotPaxAvailabilities.map((paxAvail) => ({
                     type: paxAvail.paxType.type,
                     name: paxAvail.paxType.name || undefined,
                     description: paxAvail.paxType.description || undefined,
                     price: {
                         finalPrice: paxAvail.priceFinal,
                         currencyCode: paxAvail.priceCurrency,
-                        originalPrice: paxAvail.priceOriginal
+                        originalPrice: paxAvail.priceOriginal,
                     },
                     min: paxAvail.min,
                     max: paxAvail.max,
-                    remaining: paxAvail.remaining
-                }))
+                    remaining: paxAvail.remaining,
+                })),
             };
         });
         res.json({ slots: transformedSlots });
@@ -121,5 +130,5 @@ router.get('/product/:productId/date/:date', async (req, res) => {
         console.error('Error fetching slot availabilities:', error);
         res.status(500).json({ error: error.message });
     }
-});
+}));
 exports.default = router;
