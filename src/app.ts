@@ -124,7 +124,7 @@ app.get('/', (req: any, res: any) => {
 // Scheduler setup
 function setupScheduler() {
   // Every 15 minutes
-  cron.schedule('*/1 * * * *', () => {
+  cron.schedule('*/15 * * * *', () => {
     if(isPaused){ return; }
     ScheduledFunctions.scheduleFun1().catch(console.error);
   });

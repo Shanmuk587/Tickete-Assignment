@@ -9,29 +9,23 @@ const axios_1 = __importDefault(require("axios"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const prismaClient_1 = __importDefault(require("./prismaClient"));
 dotenv_1.default.config();
-// const prisma = new PrismaClient()
 const API_KEY = process.env.TICKETE_API_KEY;
 const BASE_URL = 'https://leap-api.tickete.co/api/v1/inventory';
-/**
- * Fetches inventory data for a product on a specific date and stores it in the database
- * @param productId - The ID of the product
- * @param date - The date to fetch inventory for (YYYY-MM-DD)
- */
 async function fetchAndStoreInventory(productId, date) {
     try {
-        // 1. Fetch data from the API
+        // Fetching data from the API
         const response = await axios_1.default.get(`${BASE_URL}/${productId}`, {
             params: { date },
             headers: { 'x-api-key': API_KEY }
         });
         const slots = response.data;
-        // 3. Get or create the product
+        // creating the product
         const product = await prismaClient_1.default.product.upsert({
             where: { id: productId },
             update: {},
             create: { id: productId }
         });
-        // 4. Get or create the dateAvailability
+        // dateAvailability
         const dateObj = new Date(date);
         const dateAvailability = await prismaClient_1.default.dateAvailability.upsert({
             where: {
@@ -46,7 +40,7 @@ async function fetchAndStoreInventory(productId, date) {
                 date: dateObj
             }
         });
-        // 5. Process each slot
+        // Processing each slot
         for (const slotData of slots) {
             // 6. Create or update the slot
             const slot = await prismaClient_1.default.slot.upsert({
@@ -73,9 +67,8 @@ async function fetchAndStoreInventory(productId, date) {
                     variantId: slotData.variantId
                 }
             });
-            // 7. Process each pax type in the slot
+            // Processing each pax type in the slot
             for (const paxData of slotData.paxAvailability) {
-                // 8. Get or create the pax type
                 const paxType = await prismaClient_1.default.paxType.upsert({
                     where: { type: paxData.type },
                     update: {
@@ -88,7 +81,7 @@ async function fetchAndStoreInventory(productId, date) {
                         description: paxData.description
                     }
                 });
-                // 9. Create or update the slot pax availability
+                // slot pax availability
                 await prismaClient_1.default.slotPaxAvailability.upsert({
                     where: {
                         slotId_paxTypeId: {

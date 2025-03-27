@@ -8,10 +8,10 @@ const express_1 = __importDefault(require("express"));
 const events_1 = require("events");
 const node_cron_1 = __importDefault(require("node-cron"));
 const dateAvailabilityRoutes_1 = __importDefault(require("./routes/dateAvailabilityRoutes"));
-// Import existing functions
 const fetchtoday_1 = require("./fetchtoday");
 const fetch30_1 = require("./fetch30");
 const fetch7_1 = require("./fetch7");
+let isPaused = false;
 // Increase max listeners to prevent warnings
 events_1.EventEmitter.defaultMaxListeners = 20;
 // Custom Queue Class for managing task processing
@@ -53,9 +53,9 @@ class TaskQueue {
         this.isProcessing = false;
     }
 }
-// Create a global task queue
+// Created a global task queue
 const globalTaskQueue = new TaskQueue();
-// Logging utility
+// Logging utility for debugging
 function log(message) {
     console.log(`[${new Date().toISOString()}] ${message}`);
 }
@@ -93,30 +93,49 @@ exports.ScheduledFunctions = ScheduledFunctions;
 const app = (0, express_1.default)();
 exports.app = app;
 const PORT = process.env.PORT || 3000;
-// Health check endpoint
-app.get('/health', (req, res) => {
-    res.status(200).json({
-        status: 'healthy',
-        timestamp: new Date().toISOString()
-    });
-});
 app.use('/date-availabilities', dateAvailabilityRoutes_1.default);
+// Routes
+app.post("/pause", (req, res) => {
+    if (isPaused) {
+        return res.status(400).json({ message: "Task is already paused." });
+    }
+    isPaused = true;
+    console.log("Task has been paused.");
+    return res.status(200).json({ message: "Task has been paused successfully." });
+});
+app.post("/resume", (req, res) => {
+    if (!isPaused) {
+        return res.status(400).json({ message: "Task is being done" });
+    }
+    isPaused = false;
+    console.log("Task has resumed.");
+    return res.status(200).json({ message: "Task interval started" });
+});
 app.get('/', (req, res) => {
     res.send('Hello, TypeScript with Express!');
 });
 // Scheduler setup
 function setupScheduler() {
     // Every 15 minutes
-    node_cron_1.default.schedule('*/1 * * * *', () => {
+    node_cron_1.default.schedule('*/15 * * * *', () => {
+        if (isPaused) {
+            return;
+        }
         ScheduledFunctions.scheduleFun1().catch(console.error);
     });
     // Every 4 hours
     //   0 */4 * * *
     node_cron_1.default.schedule('0 */4 * * *', () => {
+        if (isPaused) {
+            return;
+        }
         ScheduledFunctions.scheduleFun2().catch(console.error);
     });
     // Daily at midnight
     node_cron_1.default.schedule('0 0 * * *', () => {
+        if (isPaused) {
+            return;
+        }
         ScheduledFunctions.scheduleFun3().catch(console.error);
     });
 }

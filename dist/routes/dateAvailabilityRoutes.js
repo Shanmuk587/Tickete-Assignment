@@ -93,7 +93,7 @@ router.get('/product/:productId/date/:date', async (req, res) => {
             const firstPaxAvail = slot.slotPaxAvailabilities[0];
             return {
                 startTime: slot.startTime,
-                startDate: dateString, // Use the requested date
+                startDate: dateString,
                 price: {
                     finalPrice: firstPaxAvail?.priceFinal || 0,
                     currencyCode: firstPaxAvail?.priceCurrency || 'GBP',
