@@ -16,7 +16,7 @@ async function batchFetchInventory() {
     const today = format(new Date(), 'yyyy-MM-dd');
     
     // Create rate limiter: 30 requests per minute (1 request per 2 seconds)
-    const limit = pLimit(5); // Only 5 concurrent request
+    const limit = pLimit(1); // Only 1 concurrent request
     const requestDelay = 2000; // 2 seconds between requests
 
     console.log(`Starting batch inventory fetch on today i.e ${today} for ${productIds.length} products`);
@@ -32,7 +32,7 @@ async function batchFetchInventory() {
           }
           
           console.log(`Fetching inventory for product ${productId}...`);
-          await fetchAndStoreInventory(productId, today);
+          fetchAndStoreInventory(productId, today);
           console.log(`Successfully fetched inventory for product ${productId}`);
           return { productId, success: true };
           
@@ -44,7 +44,7 @@ async function batchFetchInventory() {
       });
     });
     
-    // Waiting for all requests to complete, 5 at a time
+    // Waiting for all requests to complete, 1 at a time
     const results = await Promise.all(promises);
     
     // Summarizing the results

@@ -39,7 +39,7 @@ async function fetchNext7Days(
       try {
         // Process the request
         fetchAndStoreInventory(productId, date);
-        console.log(`Completed: Product ${productId} for ${date}`);
+        console.log(`started: Product ${productId} for ${date}`);
         
         // rate limiting
         await setTimeout(delayMs);

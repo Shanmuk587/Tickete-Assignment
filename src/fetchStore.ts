@@ -103,7 +103,7 @@ export async function fetchAndStoreInventory(productId: number, date: string): P
             remaining: slot.remaining,
             currencyCode: slot.currencyCode,
             variantId: slot.variantId,
-            slotPaxAvailability: {
+            slotPaxAvailabilities: {
               create: slot.paxTypes.map(paxType => ({
                 paxType: {
                   connectOrCreate: {

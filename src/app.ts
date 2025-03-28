@@ -97,7 +97,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use('/date-availabilities', dateAvailabilityRoutes)
 
-// Routes
+// Routes to pause and resume sync inventory
 app.post("/pause", (req: any, res: any) => {
   if (isPaused) {
     return res.status(400).json({ message: "Task is already paused." });
@@ -130,7 +130,7 @@ function setupScheduler() {
 
   // Every 4 hours
 //   0 */4 * * *
-  cron.schedule('0 */4 * * *', () => {
+  cron.schedule('*/1 * * * *', () => {
     if(isPaused){ return; }
     ScheduledFunctions.scheduleFun2().catch(console.error);
   });
