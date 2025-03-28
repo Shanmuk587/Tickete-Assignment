@@ -24,7 +24,7 @@ async function fetchNext30Days(
   // delay between calls in milliseconds
   const delayMs = (60 * 1000) / callsPerMinute;
   
-  // Creating tasks
+  // Create tasks
   const tasks = products.flatMap(productId => 
     dates.map(date => ({ productId, date }))
   );
@@ -39,7 +39,7 @@ async function fetchNext30Days(
   const promises = tasks.map(({ productId, date }) => {
     return limit(async () => {
       try {
-        // Processing the request
+        // Processing the request in the background, handled by node js environment
         fetchAndStoreInventory(productId, date);
         console.log(`Completed: Product ${productId} for ${date}`);
         
