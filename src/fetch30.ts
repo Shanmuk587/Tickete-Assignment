@@ -39,7 +39,7 @@ async function fetchNext30Days(
   const promises = tasks.map(({ productId, date }) => {
     return limit(async () => {
       try {
-        // Processing the request
+        // Processing the request in the background, handled by node js environment
         fetchAndStoreInventory(productId, date);
         console.log(`Completed: Product ${productId} for ${date}`);
         
