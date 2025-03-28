@@ -1,5 +1,3 @@
-##APIs
-
 #### Date Availabilty API:
 ```json
 {
@@ -89,17 +87,18 @@ This API provides detailed information about available slots, including pricing 
 }
 ```
 
-# Project Optimizations that can be done
+# Project Optimizations
 
+This document outlines various optimizations implemented to improve the performance, scalability, and reliability of the project.
 
 ## Increasing Threadpool limit, Looking at the metrics to set the optimal limit
 
-<!-- ## Batching Database Writes
+## Batching Database Writes
 - Batching it out, if the process interupts, can be continued from that batch onwards than starting it from first
 - Current Approach: Each API call triggers a separate database write for a single entry.
 - Optimized Approach: Process data in batches to reduce the number of database writes.
   - Preprocess the data and store it in an array.
-  - Use Prisma's `createMany` with nested writes method to perform a single write operation for multiple entries, improving efficiency. -->
+  - Use Prisma's `createMany` with nested writes method to perform a single write operation for multiple entries, improving efficiency.
 
 ## Message Queues and Worker Pool
 - Implement message queues to delegate asynchronous tasks for better scalability.
@@ -112,5 +111,8 @@ This API provides detailed information about available slots, including pricing 
 - Implement database sharding to split data across multiple databases or nodes based on specific criteria, improving read/write performance.
 - Enable horizontal scaling to handle increased traffic by adding more servers or nodes.
 
+## APIs
 
+### Date Availability API
+This API provides information about the availability and pricing of different dates.
 
