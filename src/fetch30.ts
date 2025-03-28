@@ -24,7 +24,7 @@ async function fetchNext30Days(
   // delay between calls in milliseconds
   const delayMs = (60 * 1000) / callsPerMinute;
   
-  // Create tasks
+  // Creating tasks
   const tasks = products.flatMap(productId => 
     dates.map(date => ({ productId, date }))
   );
