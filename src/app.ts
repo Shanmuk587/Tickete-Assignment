@@ -130,7 +130,7 @@ function setupScheduler() {
 
   // Every 4 hours
 //   0 */4 * * *
-  cron.schedule('*/1 * * * *', () => {
+  cron.schedule('0 */4 * * *', () => {
     if(isPaused){ return; }
     ScheduledFunctions.scheduleFun2().catch(console.error);
   });
