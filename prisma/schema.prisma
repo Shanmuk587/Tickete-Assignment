@@ -4,14 +4,14 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" 
+  provider = "postgresql" // or "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model Product {
   id              Int               @id
-  name            String?           
-  description     String?           
+  name            String?           // Optional:  If you have product names
+  description     String?           // Optional: If you have descriptions
   DateAvailability DateAvailability[]
 }
 
