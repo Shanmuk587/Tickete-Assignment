@@ -41,7 +41,7 @@ async function fetchNext30Days(
       try {
         // Processing the request in the background, handled by node js environment
         fetchAndStoreInventory(productId, date);
-        console.log(`Completed: Product ${productId} for ${date}`);
+        console.log(`started: Product ${productId} for ${date}`);
         
         // Ratelimiting
         await setTimeout(delayMs);
